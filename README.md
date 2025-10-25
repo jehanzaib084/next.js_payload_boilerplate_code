@@ -1,122 +1,220 @@
-# Payload Blank Starter
+# Payload CMS Boilerplate with Next.js
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/payloadcms/payload/tree/main/templates/with-vercel-postgres&project-name=payload-project&env=PAYLOAD_SECRET&build-command=pnpm%20run%20ci&stores=%5B%7B%22type%22:%22postgres%22%7D,%7B%22type%22:%22blob%22%7D%5D)
+A modern, full-stack boilerplate for building web applications with Payload CMS and Next.js. This template provides a solid foundation with authentication, media management, and a clean architecture ready for production.
 
-This template comes configured with the bare minimum to get started on anything you need.
+## 🚀 Features
 
-## Quick start
+- **Payload CMS 3.0** - Headless CMS with powerful admin interface
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Full type safety throughout the application
+- **PostgreSQL Database** - Robust SQL database with migrations
+- **Vercel Blob Storage** - Scalable file storage for media assets
+- **Authentication** - Built-in user management and admin panel
+- **Rich Text Editor** - Lexical-based rich text editing
+- **API Routes** - REST and GraphQL APIs out of the box
+- **Testing Suite** - Vitest for unit tests, Playwright for E2E tests
+- **Docker Support** - Containerized development environment
+- **ESLint & Prettier** - Code quality and formatting
 
-Click the 'Deploy' button above to spin up this template directly into Vercel hosting. It will first prompt you save this template into your own Github repo so that you own the code and can make any changes you want to it.
+## 📋 Prerequisites
 
-Set up the following services and secrets and then once the app has been built and deployed you will be able to visit your site at the generated URL.
-From this point on you can access your admin panel at `/admin` of your app URL, create an admin user and then click the 'Seed the database' button in the dashboard to add content into your app.
+- Node.js 18.20.2 or higher (recommended: 20.9.0+)
+- PostgreSQL database (local or cloud)
+- npm (comes with Node.js)
 
-### Services
+## 🛠️ Quick Start
 
-This project uses the following services integrated into Vercel which you will need to click "Add" and "Connect" for:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/next.js_payload_boilerplate_code.git
+   cd next.js_payload_boilerplate_code
+   ```
 
-Neon Database - Postgres-based cloud database used to host your data
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Vercel Blob Storage - object storage used to host your files such as images and videos
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
 
-The connection variables will automatically be setup for you on Vercel when these services are connected.
+   Edit `.env` and add your database connection string and other required secrets:
+   ```env
+   POSTGRES_URL=your_postgres_connection_string
+   PAYLOAD_SECRET=your_secret_key_here
+   BLOB_READ_WRITE_TOKEN=your_blob_token_here
+   ```
 
-#### Secrets
+4. **Generate types and import map**
+   ```bash
+   npm run generate:types
+   npm run generate:importmap
+   ```
 
-You will be prompted to add the following secret values to your project. These should be long unguessable strong passwords, you can also use a password manager to generate one for these.
+5. **Run database migrations**
+   ```bash
+   npm run payload migrate
+   ```
 
-PAYLOAD_SECRET - used by Payload to sign secrets like JWT tokens
+6. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-## Quick Start - local setup
+7. **Open your browser**
+   - App: http://localhost:3000
+   - Admin panel: http://localhost:3000/admin
 
-To spin up this template locally, follow these steps:
+## 🏗️ Project Structure
 
-### Clone
-
-After you click the `Deploy` button above, you'll want to have standalone copy of this repo on your machine. If you've already cloned this repo, skip to [Development](#development).
-
-### Development
-
-1. First [clone the repo](#clone) if you have not done so already
-2. `cd my-project && cp .env.example .env` to copy the example environment variables. You'll need to add the `POSTGRES_URL` and `BLOB_READ_WRITE_TOKEN` from your Vercel project to your `.env` if you want to use Vercel Blob and the Neon database that was created for you.
-
-   > _NOTE: If the connection string value includes `localhost` or `127.0.0.1`, the code will automatically use a normal postgres adapter instead of Vercel._. You can override this functionality by setting `forceUseVercelPostgres: true` if desired.
-
-3. `pnpm install && pnpm dev` to install dependencies and start the dev server
-4. open `http://localhost:3000` to open the app in your browser
-
-That's it! Changes made in `./src` will be reflected in your app. Follow the on-screen instructions to login and create your first admin user. Then check out [Production](#production) once you're ready to build and serve your app, and [Deployment](#deployment) when you're ready to go live.
-
-#### Docker (Optional)
-
-If you prefer to use Docker for local development instead of a local Postgres instance, the provided docker-compose.yml file can be used.
-
-To do so, follow these steps:
-
-- Modify the `POSTGRES_URL` in your `.env` file to `postgres://postgres@localhost:54320/<dbname>`
-- Modify the `docker-compose.yml` file's `POSTGRES_DB` to match the above `<dbname>`
-- Run `docker-compose up` to start the database, optionally pass `-d` to run in the background.
-
-## How it works
-
-The Payload config is tailored specifically to the needs of most websites. It is pre-configured in the following ways:
-
-### Collections
-
-See the [Collections](https://payloadcms.com/docs/configuration/collections) docs for details on how to extend this functionality.
-
-- #### Users (Authentication)
-
-  Users are auth-enabled collections that have access to the admin panel.
-
-  For additional help, see the official [Auth Example](https://github.com/payloadcms/payload/tree/main/examples/auth) or the [Authentication](https://payloadcms.com/docs/authentication/overview#authentication-overview) docs.
-
-- #### Media
-
-  This is the uploads enabled collection. It features pre-configured sizes, focal point and manual resizing to help you manage your pictures.
-
-## Working with Postgres
-
-Postgres and other SQL-based databases follow a strict schema for managing your data. In comparison to our MongoDB adapter, this means that there's a few extra steps to working with Postgres.
-
-Note that often times when making big schema changes you can run the risk of losing data if you're not manually migrating it.
-
-### Local development
-
-Ideally we recommend running a local copy of your database so that schema updates are as fast as possible. By default the Postgres adapter has `push: true` for development environments. This will let you add, modify and remove fields and collections without needing to run any data migrations.
-
-If your database is pointed to production you will want to set `push: false` otherwise you will risk losing data or having your migrations out of sync.
-
-#### Migrations
-
-[Migrations](https://payloadcms.com/docs/database/migrations) are essentially SQL code versions that keeps track of your schema. When deploy with Postgres you will need to make sure you create and then run your migrations.
-
-Locally create a migration
-
-```bash
-pnpm payload migrate:create
+```
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── (frontend)/         # Public pages
+│   │   ├── (payload)/          # Payload admin routes
+│   │   └── api/                # API routes
+│   ├── collections/            # Payload collections
+│   │   ├── Media.ts           # Media upload collection
+│   │   └── Users.ts           # User authentication
+│   ├── payload.config.ts      # Payload configuration
+│   └── payload-types.ts       # Generated types
+├── tests/                      # Test suites
+│   ├── e2e/                   # End-to-end tests
+│   └── int/                   # Integration tests
+├── media/                      # Static media files
+├── migrations/                 # Database migrations
+└── docker-compose.yml          # Docker configuration
 ```
 
-This creates the migration files you will need to push alongside with your new configuration.
+## 🧪 Testing
 
-On the server after building and before running `pnpm start` you will want to run your migrations
-
+### Unit & Integration Tests
 ```bash
-pnpm payload migrate
+npm run test:int
 ```
 
-This command will check for any migrations that have not yet been run and try to run them and it will keep a record of migrations that have been run in the database.
+### End-to-End Tests
+```bash
+npm run test:e2e
+```
 
-### Docker
+### All Tests
+```bash
+npm run test
+```
 
-Alternatively, you can use [Docker](https://www.docker.com) to spin up this template locally. To do so, follow these steps:
+## 🚀 Deployment
 
-1. Follow [steps 1 and 2 from above](#development), the docker-compose file will automatically use the `.env` file in your project root
-1. Next run `docker-compose up`
-1. Follow [steps 4 and 5 from above](#development) to login and create your first admin user
+### Vercel (Recommended)
 
-That's it! The Docker instance will help you get up and running quickly while also standardizing the development environment across your teams.
+1. Push your code to GitHub
+2. Connect your repository to Vercel
+3. Add the following environment variables in Vercel:
+   - `POSTGRES_URL`
+   - `PAYLOAD_SECRET`
+   - `BLOB_READ_WRITE_TOKEN`
+4. Deploy!
 
-## Questions
+### Manual Deployment
 
-If you have any issues or questions, reach out to us on [Discord](https://discord.com/invite/payload) or start a [GitHub discussion](https://github.com/payloadcms/payload/discussions).
+1. **Build the application**
+   ```bash
+   npm run build
+   ```
+
+2. **Run database migrations**
+   ```bash
+   npm run payload migrate
+   ```
+
+3. **Start the production server**
+   ```bash
+   npm start
+   ```
+
+## 🐳 Docker Development
+
+For local development with Docker:
+
+1. Update `POSTGRES_URL` in `.env` to:
+   ```
+   POSTGRES_URL=postgres://postgres@localhost:54320/your_db_name
+   ```
+
+2. Update `docker-compose.yml` to match your database name
+
+3. Start the database:
+   ```bash
+   docker-compose up -d
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+## 📚 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run test` - Run all tests
+- `npm run test:int` - Run integration tests
+- `npm run test:e2e` - Run E2E tests
+- `npm run payload migrate:create` - Create new migration
+- `npm run payload migrate` - Run pending migrations
+- `npm run generate:types` - Generate TypeScript types
+- `npm run generate:importmap` - Generate import map
+
+## 🔧 Configuration
+
+### Payload CMS
+
+Edit `src/payload.config.ts` to customize:
+- Collections and fields
+- Admin panel settings
+- Authentication configuration
+- Upload handling
+
+### Next.js
+
+Edit `next.config.mjs` for Next.js configuration:
+- Build settings
+- Environment variables
+- Rewrites and redirects
+
+### Database
+
+This boilerplate uses PostgreSQL. For local development, you can:
+- Use Docker (recommended)
+- Install PostgreSQL locally
+- Use a cloud provider (Neon, Supabase, etc.)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Run the test suite
+6. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+- [Payload CMS Documentation](https://payloadcms.com/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Discord Community](https://discord.com/invite/payload)
+
+## 📝 Notes
+
+- This boilerplate is configured for production use with proper security measures
+- Database migrations are required for schema changes
+- The admin panel is accessible at `/admin` after creating your first admin user
+- File uploads are handled via Vercel Blob Storage by default
